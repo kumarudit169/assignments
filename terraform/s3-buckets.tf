@@ -1,6 +1,3 @@
-# ============================================
-# PRIMARY BUCKET (Root Path)
-# ============================================
 resource "aws_s3_bucket" "origin_primary" {
   bucket = "${var.project_name}-primary-origin-${random_id.bucket_suffix.hex}"
   force_destroy       = true
@@ -12,8 +9,6 @@ resource "aws_s3_bucket" "origin_primary" {
   }
 }
 
-# Enable website hosting for primary bucket
-# THIS IS CRITICAL - allows serving /index.html as /
 resource "aws_s3_bucket_website_configuration" "origin_primary" {
   bucket = aws_s3_bucket.origin_primary.id
 
@@ -25,9 +20,6 @@ resource "aws_s3_bucket_website_configuration" "origin_primary" {
     key = "error.html"
   }
 }
-
-# Public read policy for website hosting
-# Note: Website hosting requires public access
 resource "aws_s3_bucket_policy" "origin_primary_policy" {
   bucket = aws_s3_bucket.origin_primary.id
   depends_on = [aws_s3_bucket_public_access_block.origin_primary]
@@ -46,7 +38,6 @@ resource "aws_s3_bucket_policy" "origin_primary_policy" {
   })
 }
 
-# Allow public access (required for website hosting)
 resource "aws_s3_bucket_public_access_block" "origin_primary" {
   bucket = aws_s3_bucket.origin_primary.id
 
@@ -56,9 +47,6 @@ resource "aws_s3_bucket_public_access_block" "origin_primary" {
   restrict_public_buckets = false
 }
 
-# ============================================
-# SECONDARY BUCKET (/devops-folder/ path)
-# ============================================
 resource "aws_s3_bucket" "origin_secondary" {
   bucket = "${var.project_name}-secondary-origin-${random_id.bucket_suffix.hex}"
   force_destroy       = true
@@ -70,7 +58,6 @@ resource "aws_s3_bucket" "origin_secondary" {
   }
 }
 
-# Enable website hosting for secondary bucket
 resource "aws_s3_bucket_website_configuration" "origin_secondary" {
   bucket = aws_s3_bucket.origin_secondary.id
 
@@ -82,8 +69,6 @@ resource "aws_s3_bucket_website_configuration" "origin_secondary" {
     key = "error.html"
   }
 }
-
-# Public read policy for secondary bucket
 resource "aws_s3_bucket_policy" "origin_secondary_policy" {
   bucket = aws_s3_bucket.origin_secondary.id
   depends_on = [aws_s3_bucket_public_access_block.origin_secondary]
@@ -110,8 +95,6 @@ resource "aws_s3_bucket_public_access_block" "origin_secondary" {
   ignore_public_acls      = false
   restrict_public_buckets = false
 }
-
-# Generate random suffix for unique bucket names
 resource "random_id" "bucket_suffix" {
   byte_length = 4
 }
