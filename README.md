@@ -1,4 +1,4 @@
-# DevOps Challenge README
+# Challenge README
 
 This repository contains solutions for three assignments related to AWS, scripting, and system troubleshooting.
 
